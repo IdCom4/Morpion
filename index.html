@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Morpion</title>
+		<link rel="stylesheet" type="text/css" href="index.css">
+		<script src="https://use.fontawesome.com/64906f59e1.js"></script>
+	</head>
+	<body>
+		<nav>
+			<a href="#">2 joueurs</a>
+			<a href="contre-IA.html">Contre l'IA</a>
+		</nav>
+		<h1>Morpion</h1>
+		<button onclick="newGame()">Nouvelle Partie</button>
+		<div id="plateau">
+			<div id="A1" class="case" onclick="controller(this)"></div>
+			<div id="A2" class="case" onclick="controller(this)"></div>
+			<div id="A3" class="case" onclick="controller(this)"></div>
+			<div id="B1" class="case" onclick="controller(this)"></div>
+			<div id="B2" class="case" onclick="controller(this)"></div>
+			<div id="B3" class="case" onclick="controller(this)"></div>
+			<div id="C1" class="case" onclick="controller(this)"></div>
+			<div id="C2" class="case" onclick="controller(this)"></div>
+			<div id="C3" class="case" onclick="controller(this)"></div>
+		</div>
+		<p id="info">C'est au joueur 1 !</p>
+	</body>
+	<script type="text/javascript" src="index.js"></script>
+	<script type="text/javascript">
+		var over = 0;
+		var tour = 1;
+		var Plateau = document.getElementById('plateau');
+		var Cases = document.getElementsByClassName('case');
+		var Info = document.getElementById('info');
+
+		function newGame() {
+			for(var i = 0; i < 9; i++)
+				Cases[i].innerHTML = "";
+			tour = 1;
+			Info.innerText = "C'est au joueur 1 !";
+			over = 0;
+		}
+
+		function isEmpty(id) {
+			return(document.getElementById(id).innerHTML);
+		}
+
+		function putSymbol(id) {
+			document.getElementById(id).innerHTML = (tour == 1)?"<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>":"<i class=\"fa fa-times\" aria-hidden=\"true\"></i>";
+		}
+
+
+		function testColonne(n) {
+			var player1 = 0;
+			var player2 = 0;
+
+			for(var i = 0; i < 9; i++) {
+				if(i >= (n)*3 && i < ((n+1)*3)) {
+					if(Cases[i].innerHTML == "<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>")
+						player1++;
+					if(Cases[i].innerHTML == "<i class=\"fa fa-times\" aria-hidden=\"true\"></i>")
+						player2++;
+				}
+			}
+			if(player1 == 3 || player2 == 3)
+				return(1);
+			return(0);
+		}
+
+
+		function testDiagonale(n) {
+			var player1 = 0;
+			var player2 = 0;
+
+
+			if(n == 1) {
+				player1 += (document.getElementById('A1').innerHTML == "<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>")?1:0;
+				player2 += (document.getElementById('A1').innerHTML == "<i class=\"fa fa-times\" aria-hidden=\"true\"></i>")?1:0;
+
+				player1 += (document.getElementById('B2').innerHTML == "<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>")?1:0;
+				player2 += (document.getElementById('B2').innerHTML == "<i class=\"fa fa-times\" aria-hidden=\"true\"></i>")?1:0;
+
+				player1 += (document.getElementById('C3').innerHTML == "<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>")?1:0;
+				player2 += (document.getElementById('C3').innerHTML == "<i class=\"fa fa-times\" aria-hidden=\"true\"></i>")?1:0;
+
+				if(player1 == 3 || player2 == 3)
+					return(1);
+			}
+
+			if(n == 2) {
+				player1 += (document.getElementById('A3').innerHTML == "<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>")?1:0;
+				player2 += (document.getElementById('A3').innerHTML == "<i class=\"fa fa-times\" aria-hidden=\"true\"></i>")?1:0;
+
+				player1 += (document.getElementById('B2').innerHTML == "<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>")?1:0;
+				player2 += (document.getElementById('B2').innerHTML == "<i class=\"fa fa-times\" aria-hidden=\"true\"></i>")?1:0;
+
+				player1 += (document.getElementById('C1').innerHTML == "<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>")?1:0;
+				player2 += (document.getElementById('C1').innerHTML == "<i class=\"fa fa-times\" aria-hidden=\"true\"></i>")?1:0;
+
+				if(player1 == 3 || player2 == 3)
+					return(1);
+			}
+			return(0);
+		}
+
+
+		function testLigne(n) {
+			var player1 = 0;
+			var player2 = 0;
+			for(var i = 0; i < 9; i++) {
+				if(i % 3 == n) {
+					if(Cases[i].innerHTML == "<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>"){
+						player1++;
+					}
+					if(Cases[i].innerHTML == "<i class=\"fa fa-times\" aria-hidden=\"true\"></i>"){
+						player2++;
+					}
+				}
+			}
+			if(player1 == 3 || player2 == 3)
+				return(1);
+			return(0);
+		}
+
+
+		function isFull() {
+			for (var i = 0; i < 9; i++) {
+				if(Cases[i].innerHTML == "")
+					return(0);
+			}
+			return(1);
+		}
+
+		function isOver() {
+			for(var i = 0; i < 3; i++) {
+				if(testLigne(i) == 1 || testColonne(i) == 1 || testDiagonale(i) == 1)
+					return(1);
+			}
+			if(isFull() == 1)
+				return(2);
+			return(0);
+		}
+
+		function controller(monThis) {
+			if(over == 0) {
+				var id = monThis.id;
+				if(isEmpty(id) != "")
+					return(0);
+				putSymbol(id);
+				if(isOver() == 1) {
+					Info.innerText = "Victoire du joueur "+tour+" !";
+					over = 1;
+				}
+				else if(isOver() == 2) {
+					Info.innerText = "Egalite !";
+					over = 1;
+				}
+				else {
+					tour = (tour == 1)?2:1;
+					Info.innerText = "C'est au joueur "+tour+" !";
+				}
+			}
+		}
+	</script>
+</html>
