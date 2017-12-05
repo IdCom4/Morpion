@@ -365,12 +365,23 @@
 			if(firstInCorner() != 0 && oppositeCorner(firstInCorner()).innerHTML == "<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>") {
 				return(1);
 			}
+			return(0);
 		}
 
+		function deuxAligne() {
+			if(firstInCorner() != 0 && document.getElementById("B2").innerHTML == "<i class=\"fa fa-times\" aria-hidden=\"true\"></i>") {
+				return(oppositeCorner(firstInCorner()));
+			}
+			return(0);
+		}
 
 		function casParticulier() {
 			if(count() == 3 && ligneDiagonale() == 1 && tour == 1) {
 				putSymbolIA(document.getElementById("B1"));
+				return(1);
+			}
+			if(count() == 2 && deuxAligne() != 0 && tour == 2) {
+				putSymbolIA(deuxAligne());
 				return(1);
 			}
 			return(0);
