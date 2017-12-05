@@ -143,15 +143,15 @@
 
 		function controller(monThis) {
 			if(over == 0) {
-				var id = monThis.id;
-				if(isEmpty(id) != "")
+				var id = monThis.id;  //on regarde ou on a cliqué
+				if(isEmpty(id) != "") //si c'est vide
 					return(0);
-				putSymbol(id);
+				putSymbol(id);		  //faut mettre le symbole
 				if(isOver() == 1) {
 					Info.innerText = "Victoire du joueur "+tour+" !";
 					over = 1;
 				}
-				else if(isOver() == 2) {
+				else if(isOver() == 2) { //faut regarder si la partie est terminé
 					Info.innerText = "Egalite !";
 					over = 1;
 				}

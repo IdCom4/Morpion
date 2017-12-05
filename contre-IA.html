@@ -283,6 +283,18 @@
 			id.innerHTML = (tour == 2)?"<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>":"<i class=\"fa fa-times\" aria-hidden=\"true\"></i>";
 		}
 
+		function firstInCorner() {
+			if(document.getElementById("A1").innerHTML != "")
+				return("A1");
+			if(document.getElementById("A3").innerHTML != "")
+				return("A3");
+			if(document.getElementById("C1").innerHTML != "")
+				return("C1");
+			if(document.getElementById("C3").innerHTML != "")
+				return("C3");
+			return(0)
+		}
+
 		function canWin() {
 			console.log("in canWin");
 			var id;
@@ -325,6 +337,41 @@
 					putSymbolIA(id);
 					return(1);
 				}
+			}
+			return(0);
+		}
+
+		function count() {
+			var count = 0;
+			for(var i = 0; i < 9; i++) {
+				if(Cases[i].innerHTML != "")
+					count++;
+			}
+			return(count);
+		}
+
+		function oppositeCorner(id) {
+			if(id == "A1")
+				return(Cases[8]);
+			if(id == "A3")
+				return(Cases[6]);
+			if(id == "C1")
+				return(Cases[2]);
+			if(id == "C3")
+				return(Cases[0]);
+		}
+
+		function ligneDiagonale() {
+			if(firstInCorner() != 0 && oppositeCorner(firstInCorner()).innerHTML == "<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>") {
+				return(1);
+			}
+		}
+
+
+		function casParticulier() {
+			if(count() == 3 && ligneDiagonale() == 1 && tour == 1) {
+				putSymbolIA(document.getElementById("B1"));
+				return(1);
 			}
 			return(0);
 		}
@@ -472,7 +519,10 @@
 							idString += "B1";
 							break;
 						case 0:
-							idString += "B2";
+							if(firstInCorner() != 0)
+								idString = "B2";
+							else
+								idString += "A1";
 							break;
 					}
 				}
@@ -494,6 +544,8 @@
 				return(0);
 			}
 			else if(enemyCanWin() == 1)
+				return(0);
+			else if(casParticulier() == 1)
 				return(0);
 			else if(createPoss(2, "IA") == 1)
 				return(0);
