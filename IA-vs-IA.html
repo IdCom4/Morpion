@@ -31,11 +31,13 @@
 	<script type="text/javascript">
 		var over = 0;
 		var tour = 1;
+		var difficulte;
 		var Plateau = document.getElementById('plateau');
 		var Cases = document.getElementsByClassName('case');
 		var Info = document.getElementById('info');
 
 		function selectFirstMove() {
+			difficulte = prompt("Choisissez le niveau de difficulté de l'IA entre 1(facile) et 3(difficile)");
 			document.getElementById(prompt("Entrez la position du premier coup : (de A à C en ordonnée, et de 1 à 3 en abscysse, ex:\"B2\")")).innerHTML = "<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>";
 			document.getElementById('info').innerText = "C'est au des IA !";
 			controller();
@@ -322,21 +324,23 @@
 		function enemyCanWin() {
 			console.log("in enemyCanWin");
 			var id;
-			for(var i = 0; i < 3; i++) {
-				id = testLigneIA(i, "humain");
-				if(id != 0) {
-					putSymbolIA(id);
-					return(1);
-				}
-				id = testColonneIA(i, "humain");
-				if(id != 0) {
-					putSymbolIA(id);
-					return(1);
-				}
-				id = testDiagonaleIA(i, "humain");
-				if(id != 0) {
-					putSymbolIA(id);
-					return(1);
+			if(difficulte > 1) {
+				for(var i = 0; i < 3; i++) {
+					id = testLigneIA(i, "humain");
+					if(id != 0) {
+						putSymbolIA(id);
+						return(1);
+					}
+					id = testColonneIA(i, "humain");
+					if(id != 0) {
+						putSymbolIA(id);
+						return(1);
+					}
+					id = testDiagonaleIA(i, "humain");
+					if(id != 0) {
+						putSymbolIA(id);
+						return(1);
+					}
 				}
 			}
 			return(0);
@@ -389,18 +393,20 @@
 		}
 
 		function casParticulier() {
-			console.log("in casParticulier");
-			if(count() == 3 && ligneDiagonale() == 1 && tour == 1) {
-				putSymbolIA(document.getElementById("B1"));
-				return(1);
-			}
-			if(count() == 2 && deuxAligne() != 0 && tour == 2) {
-				putSymbolIA(deuxAligne());
-				return(1);
-			}
-			if(count() == 1 && borderMidle() != 0 && tour == 1) {
-				putSymbolIA(document.getElementById("B2"));
-				return(1);
+			if(difficulte > 2) {
+				console.log("in casParticulier");
+				if(count() == 3 && ligneDiagonale() == 1 && tour == 1) {
+					putSymbolIA(document.getElementById("B1"));
+					return(1);
+				}
+				if(count() == 2 && deuxAligne() != 0 && tour == 2) {
+					putSymbolIA(deuxAligne());
+					return(1);
+				}
+				if(count() == 1 && borderMidle() != 0 && tour == 1) {
+					putSymbolIA(document.getElementById("B2"));
+					return(1);
+				}
 			}
 			return(0);
 		}
@@ -410,74 +416,76 @@
 			var id;
 			var poss = 0;
 			var idString;
-			for(var i = 0; i < 9; i++) {
-				idString = new String();
-				switch(i) {
-					case 0:
-						idString += "A1";
-						break;
-					case 1:
-						idString += "A2";
-						break;
-					case 2:
-						idString += "A3";
-						break;
-					case 3:
-						idString += "B1";
-						break;
-					case 4:
-						idString += "B2";
-						break;
-					case 5:
-						idString += "B3";
-						break;
-					case 6:
-						idString += "C1";
-						break;
-					case 7:
-						idString += "C2";
-						break;
-					case 8:
-						idString += "C3";
-						break;
-					default:
-						idString += "error";
-						break;
-				}
-				//console.log("idString = "+idString+" (createPoss && i = "+i+")");
-				if(isEmpty(idString) == "") {
-					if(joueur == "IA")
-						putSymbolIA(document.getElementById(idString));
-					else
-						putSymbol(idString);
-					for(var n = 0; n < 3; n++) {
-						//console.log("on tourne, et n = "+n);
-						id = testLigneIA(n, joueur);
-						if(id != 0) {
-							console.log("ligne "+n+" poss++");
-							poss++;
-						}
-						id = testColonneIA(n, joueur);
-						if(id != 0) {
-							console.log("colonne "+n+" poss++");
-							poss++;
-						}
-						id = testDiagonaleIA(n, joueur);
-						if(id != 0) {
-							console.log("diagonale "+n+" poss++");
-							poss++;
-						}
-						if(poss >= nbr) {
-							console.log("poss = " + poss);
-							if(joueur == "humain") {
-								document.getElementById(idString).innerHTML = "";
-								putSymbolIA(document.getElementById(idString));
-							}
-							return(1);
-						}
+			if((nbr == 2 && joueur == "IA" && difficulte > 1) || (nbr == 2 && joueur == "humain" && difficulte > 2) || (nbr == 1 && joueur == "IA")) {
+				for(var i = 0; i < 9; i++) {
+					idString = new String();
+					switch(i) {
+						case 0:
+							idString += "A1";
+							break;
+						case 1:
+							idString += "A2";
+							break;
+						case 2:
+							idString += "A3";
+							break;
+						case 3:
+							idString += "B1";
+							break;
+						case 4:
+							idString += "B2";
+							break;
+						case 5:
+							idString += "B3";
+							break;
+						case 6:
+							idString += "C1";
+							break;
+						case 7:
+							idString += "C2";
+							break;
+						case 8:
+							idString += "C3";
+							break;
+						default:
+							idString += "error";
+							break;
 					}
-					poss = 0;
-					document.getElementById(idString).innerHTML = "";
+					//console.log("idString = "+idString+" (createPoss && i = "+i+")");
+					if(isEmpty(idString) == "") {
+						if(joueur == "IA")
+							putSymbolIA(document.getElementById(idString));
+						else
+							putSymbol(idString);
+						for(var n = 0; n < 3; n++) {
+							//console.log("on tourne, et n = "+n);
+							id = testLigneIA(n, joueur);
+							if(id != 0) {
+								console.log("ligne "+n+" poss++");
+								poss++;
+							}
+							id = testColonneIA(n, joueur);
+							if(id != 0) {
+								console.log("colonne "+n+" poss++");
+								poss++;
+							}
+							id = testDiagonaleIA(n, joueur);
+							if(id != 0) {
+								console.log("diagonale "+n+" poss++");
+								poss++;
+							}
+							if(poss >= nbr) {
+								console.log("poss = " + poss);
+								if(joueur == "humain") {
+									document.getElementById(idString).innerHTML = "";
+									putSymbolIA(document.getElementById(idString));
+								}
+								return(1);
+							}
+						}
+						poss = 0;
+						document.getElementById(idString).innerHTML = "";
+					}
 				}
 			}
 			return(0);
@@ -568,7 +576,7 @@
 		function IA() {
 			//console.log("in IA()");
 			if(canWin() == 1){
-				Info.innerText = "Victoire de l'IA "+((tour == 1)?2:1)+"!";
+				Info.innerText = "Victoire de l'IA "+((tour == 1)?2:1)+" !";
 				over = 1;
 				return(0);
 			}
